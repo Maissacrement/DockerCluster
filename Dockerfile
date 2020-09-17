@@ -1,0 +1,6 @@
+FROM dind
+
+COPY . /APP
+WORKDIR /APP
+
+ENTRYPOINT ["/bin/bash"]

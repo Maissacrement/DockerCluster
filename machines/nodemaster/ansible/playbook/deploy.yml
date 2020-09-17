@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+
+    - name: Deploy ssh app
+      shell: |
+        /usr/bin/docker-compose build --build-arg passwd=nodemaster
+        /usr/bin/docker-compose up --scale slaves=3
+
+        alias docker_machine = $(/usr/bin/docker-compose ps -q nodemaster)
+        sed -i "s/ansible_host=*.\s/ansible_host=${docker_machine}/g" ./machines/nodemaster/inventory/host
+
+        ./machines/nodemaster/linux/ssh_remote_host.sh ${docker_machine}
+        ./machines/nodemaster/linux/docker-run-ssh-deamon.sh
+
+        echo -e "\nNetwork conf\n"
+        docker exec ${docker_machine} ifconfig | grep inet | awk '{print $2}' > ${PWD}/hosts
+        machine=`cat ${PWD}/hosts | head -1`
+
+        echo -e "\nSSH Copy on ${machine}\n"
+        ssh-keygen -R ${machine}
+        ssh-copy-id -i ${PWD}/machines/nodemaster/key/key.pub -f root@${machine}

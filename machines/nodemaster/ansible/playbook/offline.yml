@@ -1,0 +1,14 @@
+---
+- hosts: mysql
+  become: true
+
+  tasks:
+    - name: Install utils
+      apt: 
+        name: "{{item}}"
+      loop:
+        - python3
+
+        
+
+...

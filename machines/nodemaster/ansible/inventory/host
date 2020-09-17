@@ -1,0 +1,17 @@
+container-1 ansible_host=172.16.2.3 ansible_ssh_host=172.16.2.3
+container-2 ansible_host=172.16.2.4 ansible_ssh_host=172.16.2.4
+container-3 ansible_host=172.16.2.5 ansible_ssh_host=172.16.2.5
+
+
+[container]
+container-1
+container-2
+container-3
+
+[mysql]
+container-3
+
+[container:vars]
+ansible_port=22
+ansible_user=root
+ansible_ssh_private_key_file=~/.ssh/id_rsa

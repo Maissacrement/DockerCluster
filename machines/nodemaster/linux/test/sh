@@ -1,0 +1,21 @@
+ echo -e '\nGet ssh key\n'
+    rm -rf ./key/*
+    pub_key=`cat ~/.ssh/id_rsa.pub`
+    priv_key=`cat ~/.ssh/id_rsa`
+
+    echo -e "\nKey copy\n"
+    echo -e "${pub_key}\n"
+    docker exec ${docker_machine} echo ${pub_key} > /root/.ssh/id_rsa.pub
+    docker exec ${docker_machine} echo ${priv_key} > /root/.ssh/id_rsa
+    docker exec ${docker_machine} eval `ssh-agent` && ssh-add ~/.ssh/id_rsa
+
+    #docker exec ${docker_machine} cat /root/.ssh/id_rsa > ./key/mykey
+    #chmod -R 666 ./key/{mykey,mykey.pub}
+
+    docker exec ${docker_machine} ifconfig | grep inet | awk '{print $2}' > ./hosts
+    machine=`cat ./hosts | head -1`
+    echo ${machine}
+    docker exec ${docker_machine} echo 'Port 22' >> /etc/ssh/ssh_config
+    docker exec ${docker_machine} service ssh start
+    
+    ssh root@${machine} -p 22

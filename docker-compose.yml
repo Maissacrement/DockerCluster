@@ -1,0 +1,122 @@
+version: "3.8"
+services:
+  nodemaster:
+    build:
+      context: ./machines/nodemaster
+      dockerfile: Dockerfile
+    networks: 
+      - cluster
+      - room
+    container_name: nodemaster
+    volumes:
+      - /proc:/proc
+      - ${PWD}/machines/nodemaster:/APP
+
+  slaves:
+    deploy:
+      replicas: 3
+    build:
+      context: ./machines/slaves
+      dockerfile: Dockerfile
+    
+    networks: 
+      - room
+    volumes:
+      - /proc:/proc
+      - ${PWD}/machines/slaves:/APP
+
+  class1:
+    deploy:
+      replicas: 3
+    build:
+      context: ./machines/slaves
+      dockerfile: Dockerfile
+    
+    networks: 
+      - salle2
+    volumes:
+      - /proc:/proc
+      - ${PWD}/machines/slaves:/APP
+
+  class2:
+    deploy:
+      replicas: 3
+    build:
+      context: ./machines/slaves
+      dockerfile: Dockerfile
+    
+    networks: 
+      - salle3
+    volumes:
+      - /proc:/proc
+      - ${PWD}/machines/slaves:/APP
+
+  class3:
+    deploy:
+      replicas: 3
+    build:
+      context: ./machines/slaves
+      dockerfile: Dockerfile
+    
+    networks: 
+      - salle4
+    volumes:
+      - /proc:/proc
+      - ${PWD}/machines/slaves:/APP
+
+
+networks:
+    cluster:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.0.0/16
+                  gateway: 172.16.1.1
+
+    room:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.2.0/24
+                  gateway: 172.16.2.1
+
+    salle2:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.3.0/24
+                  gateway: 172.16.3.1
+    
+    salle3:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.4.0/24
+                  gateway: 172.16.4.1
+
+    salle4:
+        # use the bridge driver, but enable IPv6
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "true"
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.16.5.0/24
+                  gateway: 172.16.5.1
