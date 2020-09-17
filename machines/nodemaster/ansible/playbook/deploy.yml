@@ -16,7 +16,7 @@
         ./machines/nodemaster/linux/docker-run-ssh-deamon.sh
 
         echo -e "\nNetwork conf\n"
-        docker exec ${docker_machine} ifconfig | grep inet | awk '{print $2}' > ${PWD}/hosts
+        docker exec ${docker_machine} ifconfig inet | awk '{print $2}' > ${PWD}/hosts
         machine=`cat ${PWD}/hosts | head -1`
 
         echo -e "\nSSH Copy on ${machine}\n"

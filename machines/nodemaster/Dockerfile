@@ -2,6 +2,9 @@ FROM ubuntu:20.04
 
 USER root
 ARG passwd
+ENV HOSTNAME nodemaster
+
+RUN export PS1='${USER}@${HOSTNAME}:~# '
 
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
