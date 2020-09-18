@@ -20,7 +20,3 @@ cmd: `ssh root@172.16.x.x`
 
 
 ![some discription](diagramme.pdf "some discription")
-
-
-
-
