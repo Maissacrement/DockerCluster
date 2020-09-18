@@ -3,7 +3,7 @@
 function main() {
     for ip in $@;
     do
-        ssh-copy-id root@${ip}
+        ssh-copy-id -f root@${ip}
     done
 }
 

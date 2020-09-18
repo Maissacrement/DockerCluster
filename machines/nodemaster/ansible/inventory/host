@@ -1,15 +1,36 @@
-container-1 ansible_host=172.16.2.3 ansible_ssh_host=172.16.2.3
-container-2 ansible_host=172.16.2.4 ansible_ssh_host=172.16.2.4
-container-3 ansible_host=172.16.2.5 ansible_ssh_host=172.16.2.5
+romm-container-1 ansible_host=172.16.2.3 ansible_ssh_host=172.16.2.3
+room-container-2 ansible_host=172.16.2.4 ansible_ssh_host=172.16.2.4
+room-container-3 ansible_host=172.16.2.5 ansible_ssh_host=172.16.2.5
 
+salle2-container-1 ansible_host=172.16.3.3 ansible_ssh_host=172.16.3.3
+salle2-container-2 ansible_host=172.16.3.4 ansible_ssh_host=172.16.3.4
+salle2-container-3 ansible_host=172.16.3.5 ansible_ssh_host=172.16.3.5
 
-[container]
-container-1
-container-2
-container-3
+salle3-container-1 ansible_host=172.16.4.3 ansible_ssh_host=172.16.4.3
+salle3-container-2 ansible_host=172.16.4.4 ansible_ssh_host=172.16.4.4
+salle3-container-3 ansible_host=172.16.4.5 ansible_ssh_host=172.16.4.5
 
-[mysql]
-container-3
+salle4-container-1 ansible_host=172.16.5.3 ansible_ssh_host=172.16.5.3
+salle4-container-2 ansible_host=172.16.5.4 ansible_ssh_host=172.16.5.4
+salle4-container-3 ansible_host=172.16.5.5 ansible_ssh_host=172.16.5.5
+
+[salle4]
+salle4-container-[1:3]
+
+[salle3]
+salle3-container-[1:3]
+
+[salle2]
+salle2-container-[1:3]
+
+[room]
+room-container-[1:3]
+
+[container:children]
+room
+salle2
+salle3
+salle4
 
 [container:vars]
 ansible_port=22

@@ -1,5 +1,5 @@
 ---
-- hosts: mysql
+- hosts: salle3
   become: true
 
   tasks:

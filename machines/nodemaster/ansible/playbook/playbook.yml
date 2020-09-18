@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: salle2
   become: true
 
   tasks:
@@ -12,7 +12,7 @@
         - gcc
         - git
         - python3
-
+        
     - name: Create App repo
       shell: |
         mkdir -p /app/R /app/hadoop

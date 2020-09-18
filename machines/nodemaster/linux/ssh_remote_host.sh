@@ -8,7 +8,7 @@ function ssh_config_machine() {
     touch ${PWDR}/key/key{,.pub}
     
     echo -e '\nGenerate ssh key\n'
-    docker exec ${docker_machine} ssh-keygen -f /root/.ssh/id_rsa -N ""
+    docker exec ${docker_machine} ssh-keygen -f /root/.ssh/id_rsa -N "" 
     
     echo -e "\nGet private key\n"
     docker exec ${docker_machine} cat /root/.ssh/id_rsa > ${PWDR}/key/key
