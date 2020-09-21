@@ -36,6 +36,9 @@ run:
 kill:
 	docker stop ${DOCKER_MACHINE}
 
+kill_all:
+	docker kill `${DOCKER} ps -q`
+
 build_slave:
 	docker build -t ${SLAVE0} ./machines/slaves --build-arg passwd=unpass
 

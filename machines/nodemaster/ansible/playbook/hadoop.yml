@@ -1,0 +1,51 @@
+---
+- hosts: salle4
+  become: true
+  vars:
+    HADOOP_VERSION: 3.3.0
+    HADOOP: hadoop-{{HADOOP_VERSION}}
+    log: not_exist
+    HADOOP_TMP: /tmp/hadoop0
+    HADOOP_HOME: /opt/hadoop
+    HADOOP_ENV_SRC: ~/.playbookrc
+
+
+  tasks:
+  
+    - name: "Install hadoop package"
+      apt: 
+        name: "{{ item }}"
+      loop:
+        - tar
+        - python3-apt
+        - openjdk-14-jdk
+        - openjdk-14-jre
+
+    - name: "Init temp folder for hadoop installation"
+      file:
+        path: "{{ HADOOP_TMP }}"
+        state: directory
+        mode: '0755'
+
+    - name: "Download hadoop"
+      get_url:
+        url: https://downloads.apache.org/hadoop/common/{{HADOOP}}/{{HADOOP}}.tar.gz
+        dest: "{{ HADOOP_TMP }}"
+        backup: yes
+      register: downloader
+
+    - name: "downloader statement"
+      debug: var=downloader
+
+    - name: "Install hadoop"
+      shell: |
+        tar -C {{ HADOOP_TMP }} -xvf {{ HADOOP_TMP }}/{{ HADOOP }}.tar.gz
+        mv {{ HADOOP_TMP }}/{{ HADOOP }} {{ HADOOP_HOME }}
+        touch {{ HADOOP_ENV_SRC }}
+
+    - name: "Export hadoop env"
+      shell: |
+        echo "export PATH=${PATH}:{{ HADOOP_HOME }}/bin:{{ HADOOP_HOME }}/sbin" > {{ HADOOP_ENV_SRC }}
+        echo "export JAVA_HOME=/usr/lib/jvm/java-14-openjdk-amd64" >> {{ HADOOP_ENV_SRC }}
+        echo "source {{ HADOOP_ENV_SRC }}" >> ~/.bashrc
+...

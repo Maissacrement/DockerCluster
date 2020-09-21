@@ -19,6 +19,7 @@ RUN mkdir -p /tmp/socket &&\
     touch /tmp/socket/listener
 
 COPY ./cron.tab /var/spool/cron/crontabs/${USER}
+COPY ./playbookrc ~/.playbookrc
 
 RUN sed -i 's/#*PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
 
@@ -27,6 +28,8 @@ RUN sed -i 's/#*PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ss
 #   ) &
 
 RUN echo "export PS1='${USER}@${HOSTNAME}:~# '" >> /root/.bashrc
+#RUN echo "source ~/.playbookrc" >> /root/.bashrc
+#RUN touch ~/.sparkrc && echo "source ~/.sparkrc" >> /root/.bashrc
 
 EXPOSE 22
 ENTRYPOINT ["tail", "-f", "/dev/null"]

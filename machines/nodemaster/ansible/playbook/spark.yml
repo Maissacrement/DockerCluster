@@ -1,0 +1,58 @@
+---
+- hosts: salle4
+  become: true
+  gather_facts: no
+  vars: 
+    - workspace: not_exist
+    - SPARK_VERSION: 3.0.1
+    - SPARK: spark-{{ SPARK_VERSION }}
+    - SPARK_TMP: /tmp/spark
+    - SPARK_HOME: /opt/spark
+    - SPARK_ENV_SRC: ~/.sparkrc
+
+  tasks:
+
+    - name: "Install spark package"
+      apt: 
+        name: "{{ item }}"
+      loop:
+        - tar
+        - python3-apt
+        - openjdk-14-jdk
+        - openjdk-14-jre
+
+    - name: "Init spark temp repo, create: [ {{ SPARK_TMP }}, {{ SPARK_HOME }} ]"
+      file:
+        path: 
+          - "{{ SPARK_TMP }}"
+          - "{{ SPARK_HOME }}"
+        state: directory
+
+    - name: "Download spark"
+      get_url:
+        url: http://apache.mirrors.ovh.net/ftp.apache.org/dist/spark/{{ SPARK }}/{{ SPARK }}-bin-hadoop2.7.tgz
+        dest: "{{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7.tgz"
+        backup: yes
+      register: workspace
+
+    - debug: 
+        msg: "{{ workspace }}"
+
+    - name: "Extract spark"
+      shell: |
+        tar -C {{ SPARK_TMP }} -xvf {{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7.tgz
+        mv {{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7 {{ SPARK_HOME }}
+
+    - name: "Touch {{ SPARK_ENV_SRC }}"
+      file:
+        path: "{{ SPARK_ENV_SRC }}"
+        state: touch
+
+    - name: "Export spark env"
+      shell: |
+        echo "" > {{ SPARK_ENV_SRC }}
+        echo "export PATH=${PATH}:{{ SPARK_HOME }}/bin:{{ SPARK_HOME }}/sbin" >> {{ SPARK_ENV_SRC }}
+        echo "export JAVA_HOME=/usr/lib/jvm/java-14-openjdk-amd64" >> {{ SPARK_ENV_SRC }}
+        echo "source {{ SPARK_ENV_SRC }}" >> ~/.bashrc
+
+...

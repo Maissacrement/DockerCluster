@@ -1,0 +1,38 @@
+---
+- hosts: salle2
+  become: true
+  vars:
+
+
+  tasks:
+    - name: Install tmux
+      apt: 
+          name: "{{item}}"
+      loop:
+        - tmux
+        - r-base-core 
+        - gcc
+        - git
+        - python3
+        - openjdk-14-jdk
+        - openjdk-14-jre
+        - curl
+        
+    - name: Create App repo
+      shell: |
+        mkdir -p /app/R /app/hadoop
+
+    - git:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        repo: https://github.com/Maissacrement/RFastBuild.git
+        dest: /app/R
+
+    - git:
+        repo: https://github.com/apache/hadoop.git
+        dest: /app/hadoop
+
+    - shell: |
+        curl -s http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz | tar -xz -C /usr/local/
+        cd /usr/local && ln -s ./hadoop-2.7.1 hadoop
+        mkdir -p /usr/local/hadoop
+
+        

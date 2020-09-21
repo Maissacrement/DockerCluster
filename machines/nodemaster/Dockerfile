@@ -30,5 +30,9 @@ RUN echo "export rsa_is_defined='ls -la /root/.ssh/id_rsa | wc -c'" >> /root/.ba
 RUN mkdir -p /APP
 COPY . /APP
 
+RUN touch /APP/iplist &&\
+    echo "# /APP/linux/ssh_copy.sh ''' $(cat /APP/iplist) '''" >> ~/.bash_history
+RUN echo "ansible-playbook -i /APP/ansible/inventory/host /APP/ansible/playbook/playbook.yml" >>  ~/.bash_history
+
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
