@@ -1,0 +1,52 @@
+---
+- hosts: salle4
+  become: true
+  vars:
+    HBASE_VERSION: 2.3.1
+    HBASE: hbase-{{HBASE_VERSION}}
+    HBASE_TMP: /tmp/hbase
+    HBASE_HOME: /opt/hbase
+    HBASE_ENV_SRC: ~/.hbaserc
+
+  tasks:
+    - name: "Init spark temp repo, create: [ {{ HBASE_TMP }}, {{ HBASE_HOME }} ]"
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ HBASE_TMP }}"
+        - "{{ HBASE_HOME }}"
+
+    - name: "Download hbase"
+      get_url:
+        url: https://apache.mediamirrors.org/hbase/{{ HBASE_VERSION }}/{{ HBASE }}-bin.tar.gz
+        dest: "{{ HBASE_TMP }}/{{ HBASE }}-bin.tar.gz"
+        backup: yes
+      register: downloader
+
+    - name: "downloader statement"
+      debug: var=downloader
+
+    - name: "Extract Hbase"
+      shell: |
+        file="{{ HBASE_TMP }}/{{ HBASE }}"
+        if [ ! -e $file ]
+        then
+            tar -C {{ HBASE_TMP }} -xvf ${file}-bin.tar.gz
+            mv ${file}/* {{ HBASE_HOME }}
+        fi
+
+    - name: "Touch {{ HBASE_ENV_SRC }}"
+      file:
+        path: "{{ HBASE_ENV_SRC }}"
+        state: touch
+
+    - name: "Export hbase env"
+      shell: |
+        echo "" > {{ HBASE_ENV_SRC }}
+        echo "export PATH=${PATH}:{{ HBASE_HOME }}/bin" >> {{ HBASE_ENV_SRC }}
+        echo "source {{ HBASE_ENV_SRC }}" >> ~/.bashrc
+
+    
+
+...

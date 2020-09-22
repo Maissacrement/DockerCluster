@@ -9,7 +9,7 @@
 
 ### RUN Docker Image
 
-cmd: `docker-compose build --build passwd=helloworld`
+cmd: `docker-compose build --build-arg passwd=helloworld`
 
 cmd: `docker-compose up`
 

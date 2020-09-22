@@ -11,8 +11,8 @@
     - SPARK_ENV_SRC: ~/.sparkrc
 
   tasks:
-
-    - name: "Install spark package"
+    
+     - name: "Install spark package"
       apt: 
         name: "{{ item }}"
       loop:
@@ -20,28 +20,36 @@
         - python3-apt
         - openjdk-14-jdk
         - openjdk-14-jre
+        - r-base-core 
+        - gcc
 
-    - name: "Init spark temp repo, create: [ {{ SPARK_TMP }}, {{ SPARK_HOME }} ]"
+     - name: "Init spark temp repo, create: [ {{ SPARK_TMP }}, {{ SPARK_HOME }} ]"
       file:
-        path: 
-          - "{{ SPARK_TMP }}"
-          - "{{ SPARK_HOME }}"
+        path: "{{ item }}"
         state: directory
+      loop:
+        - "{{ SPARK_TMP }}"
+        - "{{ SPARK_HOME }}"
 
-    - name: "Download spark"
+     - name: "Download spark"
       get_url:
         url: http://apache.mirrors.ovh.net/ftp.apache.org/dist/spark/{{ SPARK }}/{{ SPARK }}-bin-hadoop2.7.tgz
         dest: "{{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7.tgz"
         backup: yes
       register: workspace
 
-    - debug: 
+     - debug: 
         msg: "{{ workspace }}"
 
     - name: "Extract spark"
       shell: |
-        tar -C {{ SPARK_TMP }} -xvf {{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7.tgz
-        mv {{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7 {{ SPARK_HOME }}
+        file="{{ SPARK_TMP }}/{{ SPARK }}-bin-hadoop2.7"
+        if [ ! -e $file ]
+        then
+            tar -C {{ SPARK_TMP }} -xvf ${file}.tgz
+            mv ${file}/* {{ SPARK_HOME }}
+        fi
+        
 
     - name: "Touch {{ SPARK_ENV_SRC }}"
       file:
@@ -54,5 +62,7 @@
         echo "export PATH=${PATH}:{{ SPARK_HOME }}/bin:{{ SPARK_HOME }}/sbin" >> {{ SPARK_ENV_SRC }}
         echo "export JAVA_HOME=/usr/lib/jvm/java-14-openjdk-amd64" >> {{ SPARK_ENV_SRC }}
         echo "source {{ SPARK_ENV_SRC }}" >> ~/.bashrc
+
+    
 
 ...

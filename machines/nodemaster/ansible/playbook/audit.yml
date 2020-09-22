@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  become: true
+  
+  
+  tasks:
+
+    - name: "Install tool for Master Audit"
+      apt:
+        name: "{{ item }}"
+      loop:
+        - inetutils-*
+        - traceroute
+        - tcpdump
+        - iftop
+        - tshark
